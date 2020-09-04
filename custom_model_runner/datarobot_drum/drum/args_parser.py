@@ -372,6 +372,16 @@ class CMRunnerArgsRegistry(object):
             )
 
     @staticmethod
+    def _reg_arg_unstructured_mode(*parsers):
+        for parser in parsers:
+            parser.add_argument(
+                "--unstructured",
+                action="store_true",
+                default=False,
+                help="Run drum in unstructured mode (model expects/produces unstructured input/output).",
+            )
+
+    @staticmethod
     def _reg_arg_show_stacktrace(*parsers):
         for parser in parsers:
             parser.add_argument(
@@ -543,6 +553,10 @@ class CMRunnerArgsRegistry(object):
         CMRunnerArgsRegistry._reg_arg_deployment_id(batch_parser, server_parser, fit_parser)
         CMRunnerArgsRegistry._reg_arg_model_id(batch_parser, server_parser, fit_parser)
         CMRunnerArgsRegistry._reg_arg_monitor_settings(batch_parser, server_parser, fit_parser)
+
+        CMRunnerArgsRegistry._reg_arg_unstructured_mode(
+            batch_parser, server_parser, parser_perf_test, validation_parser
+        )
 
         return parser
 

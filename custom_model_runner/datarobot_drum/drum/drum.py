@@ -291,6 +291,7 @@ class CMRunner(object):
         self.options.code_dir = self.options.output
         self.options.output = os.devnull
         self.options.monitor = False
+        self.options.unstructured = False
         if self.options.target:
             __tempfile = NamedTemporaryFile()
             df = pd.read_csv(self.options.input)
@@ -327,6 +328,7 @@ class CMRunner(object):
             "model_id": options.model_id,
             "deployment_id": options.deployment_id,
             "monitor_settings": options.monitor_settings,
+            "unstructured_mode": str(options.unstructured).lower(),
         }
 
         if self.run_mode == RunMode.SCORE:
@@ -488,7 +490,11 @@ class CMRunner(object):
         if self.run_mode == RunMode.SCORE:
             # print result if output is not provided
             if tmp_output_filename:
-                print(pd.read_csv(tmp_output_filename))
+                if self.options.unstructured:
+                    with open(tmp_output_filename) as f:
+                        print(f.read())
+                else:
+                    print(pd.read_csv(tmp_output_filename))
 
     def _prepare_docker_command(self, options, run_mode, raw_arguments):
         """
